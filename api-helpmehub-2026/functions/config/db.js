@@ -23,23 +23,23 @@ let dbConfig = {
 // ==========================================
 if (isFirebase) {
     // --- Cloud Mode (Production) ---
-    console.log('☁️  Environment: Firebase Cloud Functions (Gen 2)');
+    console.log('Environment: Firebase Cloud Functions (Gen 2)');
 
-    const socketPath = `/cloudsql/pkindev-sql-2021:asia-east2:pkindev-sqlmain-2021`;
+    // ดึงค่าผ่าน process.env แทนการพิมพ์ลงไปตรงๆ
+    const socketPath = `/cloudsql/${process.env.DB_CONNECTION_NAME}`;
     dbConfig.socketPath = socketPath;
 
     // Log เพื่อตรวจสอบค่า
-    console.log('⚙️  DB Config:', {
+    console.log('DB Config:', {
         user: dbConfig.user,
         database: dbConfig.database,
         socketPath: dbConfig.socketPath, 
-        password: dbConfig.password ? '****** (Hidden)' : 'MISSING ⚠️'
+        password: dbConfig.password ? '****** (Hidden)' : 'MISSING '
     });
-
 } else {
     // --- Local Mode (Development) ---
-    console.log('💻 Environment: Local Development');
-    console.log(`🔌 Connecting via IP: ${process.env.DB_HOST}`);
+    console.log('Environment: Local Development');
+    console.log(`Connecting via IP: ${process.env.DB_HOST}`);
     
     try {
         dbConfig.host = process.env.DB_HOST;
@@ -52,7 +52,7 @@ if (isFirebase) {
             rejectUnauthorized: false
         };
     } catch (error) {
-        console.error("⚠️  Warning: อ่านไฟล์ SSL Certs ไม่สำเร็จ:", error.message);
+        console.error("Warning: อ่านไฟล์ SSL Certs ไม่สำเร็จ:", error.message);
     }
 }
 
@@ -67,14 +67,14 @@ const db = pool.promise();
 // ==========================================
 
 pool.on('error', (err) => {
-    console.error('🔥 Unexpected Database Error (Pool):', err.code, err.message);
+    console.error('Unexpected Database Error (Pool):', err.code, err.message);
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-        console.error('🔄 Connection lost. Pool will try to reconnect...');
+        console.error('Connection lost. Pool will try to reconnect...');
     }
 });
 
 pool.on('connection', (connection) => {
-    console.log(`🆕 New DB Connection ID: ${connection.threadId}`);
+    console.log(`New DB Connection ID: ${connection.threadId}`);
 });
 
 // Test Query
@@ -84,18 +84,18 @@ pool.on('connection', (connection) => {
         const [rows] = await connection.query('SELECT 1 + 1 AS result');
         connection.release(); 
         
-        console.log('✅✅ DATABASE HEALTH CHECK PASSED! Result:', rows[0].result);
+        console.log('DATABASE HEALTH CHECK PASSED! Result:', rows[0].result);
         console.log('---------------------------------------------------');
     } catch (err) {
         console.error('---------------------------------------------------');
-        console.error('❌❌ DATABASE CONNECTION FAILED!!!');
+        console.error('DATABASE CONNECTION FAILED!!!');
         console.error('Error Code:', err.code);
         console.error('Error Message:', err.message);
         
         if (err.code === 'ENOENT') {
-            console.error('💡 TIP: ระบบหา Socket File ไม่เจอ เช็ค instanceConnections ใน index.js หรือสิทธิ์ IAM');
+            console.error('TIP: ระบบหา Socket File ไม่เจอ เช็ค instanceConnections ใน index.js หรือสิทธิ์ IAM');
         } else if (err.code === 'ER_ACCESS_DENIED_ERROR') {
-            console.error('💡 TIP: User/Password ผิด หรือ IP ไม่ได้รับอนุญาต');
+            console.error('TIP: User/Password ผิด หรือ IP ไม่ได้รับอนุญาต');
         }
         console.error('---------------------------------------------------');
     }
