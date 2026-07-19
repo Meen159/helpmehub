@@ -1,0 +1,19 @@
+/* นำเข้าฟอนต์ทั้งหมดจาก Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+.widget-window * {
+    font-family: inherit;
+}
+
+button, input, textarea, select {
+    font-family: inherit;
+}
+
+html.embed-mode,
+body.embed-mode {
+    background: transparent !important;
+}
+
+#root {
+    background: transparent !important;
+}
